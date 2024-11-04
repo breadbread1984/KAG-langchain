@@ -11,7 +11,7 @@ def semantic_seg_chain(llm, tokenizer, lang = 'zh'):
 if __name__ == "__main__":
   from models import Qwen2
   tokenizer, llm = Qwen2(locally = True)
-  chain = semantic_seg_chain(llm, tokenizer)
+  chain = semantic_seg_chain(llm, tokenizer, 'en')
   with open('test/sem_seg.txt','r') as f:
     res = chain.invoke({'input': f.read()})
   print(res)
