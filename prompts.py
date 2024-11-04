@@ -102,18 +102,18 @@ def semantic_seg_prompt(tokenizer, lang = 'zh'):
   examples = examples.replace('{','{{')
   examples = examples.replace('}','}}')
   system_message = {
-    'zh': """请理解input字段中的文本内容，识别文本的结构和组成部分，并按照语义主题确定分割点，将其切分成互不重叠的若干小节。如果文章有章节等可识别的结构信息，请直接按照顶层结构进行切分。
-请按照schema定义的字段返回，包含小节摘要和小节起始点。须按照JSON字符串的格式回答。具体形式请遵从example字段中给出的若干例子。
+    'zh': """请理解用户提供的的文本内容，识别文本的结构和组成部分，并按照语义主题确定分割点，将其切分成互不重叠的若干小节。如果文章有章节等可识别的结构信息，请直接按照顶层结构进行切分。
+请按照输出格式定义的字段返回，包含小节摘要和小节起始点。具体形式请遵从示范中给出的若干例子。
 
 输出格式:
 
 %s
 
-examples:
+示范:
 
 %s""",
-    'en': """Please understand the content of the text in the input field, recognize the structure and components of the text, and determine the segmentation points according to the semantic theme, dividing it into several non-overlapping sections. If the article has recognizable structural information such as chapters, please divide it according to the top-level structure.
-Please return the results according to the schema definition, including summaries and starting points of the sections. The format must be a JSON string. Please follow the examples given in the example field.
+    'en': """Please understand the content of the text provided by user, recognize the structure and components of the text, and determine the segmentation points according to the semantic theme, dividing it into several non-overlapping sections. If the article has recognizable structural information such as chapters, please divide it according to the top-level structure.
+Please return the results according to the output format definition, including summaries and starting points of the sections. Please follow the examples given in the example field.
 
 output format:
 
