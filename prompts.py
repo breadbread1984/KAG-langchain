@@ -99,6 +99,7 @@ def semantic_seg_prompt(tokenizer, lang = 'zh'):
         }
     ]
   }[lang]
+  examples = str(examples)
   examples = examples.replace('{','{{')
   examples = examples.replace('}','}}')
   system_message = {

@@ -13,5 +13,5 @@ if __name__ == "__main__":
   tokenizer, llm = Qwen2(locally = True)
   chain = semantic_seg_chain(llm, tokenizer)
   with open('sem_seg.txt','r') as f:
-  res = chain.invoke({'input': f.read()})
+    res = chain.invoke({'input': f.read()})
   print(res)
