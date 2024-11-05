@@ -14,8 +14,9 @@ class TestSemanticSeg(unittest.TestCase):
     tokenizer, llm = Qwen2(locally = True)
     semantic_seg = load_semantic_seg(tokenizer, llm, 'zh')
     with open(os.path.join(os.path.dirname(__file__), 'sem_seg.txt'), 'r') as f:
-      res = semantic_seg.invoke({'input': f.read()})
+      res = semantic_seg.invoke({'query': f.read()})
     print(res)
+    self.assertEqual(type(res), dict)
 
 if __name__ == "__main__":
   unittest.main()
