@@ -94,6 +94,6 @@ def spg_extract(tokenizer, schema):
     {'role': 'user', 'content': user_message},
   ]
   prompt = tokenizer.apply_chat_template(messages, tokenize = False, add_generation_prompt = True)
-  template = PromptTemplate(template = prompt, input_vairables = ['input'])
+  template = PromptTemplate(template = prompt, input_variables = ['input'])
   return template, parser
 
