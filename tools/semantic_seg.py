@@ -35,8 +35,8 @@ def load_semantic_seg(tokenizer, llm, lang = 'zh'):
     config: SemanticSegmentConfig
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> SemanticSegmentOutput:
       segments = self.config.predictor(query)
-      return SemanticSegmentOutput([Schema(section_summary = segment.section_summary,
-                                           section_starting_point = segment.section_starting_point) for segment in segments])
+      return SemanticSegmentOutput([Schema(section_summary = segment['section_summary'],
+                                           section_starting_point = segment['section_starting_point']) for segment in segments])
   predictor = SemanticSegment(tokenizer, llm)
   return SemanticSegmentTool(config = SemanticSegmentConfig(
     predictor = predictor
