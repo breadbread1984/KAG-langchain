@@ -1,3 +1,3 @@
 #!/usr/bin/python3
 
-from semantic_seg import SemanticSegment
+from .semantic_seg import SemanticSegment
