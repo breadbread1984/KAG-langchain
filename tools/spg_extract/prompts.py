@@ -1,15 +1,23 @@
 #!/usr/bin/python3
 
-from typing import Dict, Optional
+import re
+from typing import List, Dict, Optional
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
 
-def spg_extract(tokenizer):
-  class Output(BaseModel):
+def spg_extract(tokenizer, schema):
+  pattern = r"([^(]*)\((.*)\)"
+  schema = {re.search(pattern, k, re.DOTALL)[1]:v for k, v in schema.items()}
+  schema = str(schema)
+  schema = schema.replace('{','{{')
+  schema = schema.replace('}','}}')
+  class Entity(BaseModel):
     entity: str = Field(description = '实体文本')
     category: str = Field(description = '实体类别')
-    properties: Optional[Dict[str]] = Field(None, description = '实体的属性')
+    properties: Optional[Dict[str, str]] = Field(None, description = '实体的属性')
+  class Output(BaseModel):
+    entities: List[Entity] = Field(description = "Entity的list")
   parser = JsonOutputParser(pydantic_object = Output)
   instructions = parser.get_format_instructions()
   instructions = instructions.replace('{','{{')
@@ -61,4 +69,31 @@ def spg_extract(tokenizer):
             ],
         }
   ]
+  examples = str(examples)
+  examples = examples.replace('{','{{')
+  examples = examples.replace('}','}}')
+  user_message = """你是一个图谱知识抽取的专家, 基于constraint 定义的schema，从input 中抽取出所有的实体及其属性，input中未明确提及的属性返回NAN，以标准json 格式输出，结果返回list
+
+输出格式：
+
+%s
+
+示范：
+
+%s
+
+请基于schema:
+
+%s
+
+抽取以下文本中的实体及属性:
+
+{input}
+"""%(instructions, examples, schema)
+  messages = [
+    {'role': 'user', 'content', user_message},
+  ]
+  prompt = tokenizer.apply_chat_template(messages, tokenize = False, add_generation_prompt = True)
+  template = PromptTemplate(template = prompt, input_vairables = ['input'])
+  return template, parser
 
