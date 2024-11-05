@@ -42,7 +42,7 @@ def spg_extract(tokenizer, schema):
             "output": [
                 {
                     "entity": "甲状腺结节",
-                    "category":"Disease"
+                    "category":"Disease",
                     "properties": {
                         "complication": "甲状腺癌",
                         "commonSymptom": ["颈部疼痛", "咽喉部异物感", "压迫感"],
