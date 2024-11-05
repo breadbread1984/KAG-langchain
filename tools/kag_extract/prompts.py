@@ -15,7 +15,7 @@ def ner_template(tokenizer, schema):
   class Entity(BaseModel):
     entity: str = Field(description = "text of entity")
     type: str = Field(description = "entity type")
-    category: str = Field(description = "category which entity type belongs")
+    category: str = Field(description = "category which entity type belongs to")
     description: str = Field(description = "a brief description of the entity")
   class Output(BaseModel):
     entities: List[Entity] = Field(description = "a list of Entity")
