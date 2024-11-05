@@ -27,7 +27,7 @@ def load_spg_extract(tokenizer, llm, schema):
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> SPGExtractOutput:
       entities = self.config.predictor.predict(query)
       return SPGExtractOutput(entities = [Entity(entity = entity['entity'], category = entity['category'], properties = entity['properties']) for entity in entities])
-  predictor = SPGExtractInput(tokenizer, llm, schema)
+  predictor = SPGExtract(tokenizer, llm, schema)
   return SPGExtractTool(config = SPGExtractConfig(
     predictor = predictor
   ))
