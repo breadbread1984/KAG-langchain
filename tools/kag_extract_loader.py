@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from typing import Annotated, Optional, Type, List, Dict, Union, Any
 from langchain.tools import BaseTool, StructuredTool, Tool, tool
 from langchain.callbacks.manager import AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
-from .kag_extract import NERExtract, TripletExtract
+from .kag_extract import NERExtract, TripletExtract, EntityStandard
 
 def load_ner_extract(tokenizer, llm, schema):
   class Entity(BaseModel):
@@ -56,5 +56,33 @@ def load_triplet_extract(tokenizer, llm):
       return TripletOutput(triplets = [Triplet(triplet = triplet) for triplet in triplets])
   predictor = TripletExtract(tokenizer, llm)
   return TripletExtractTool(config = TripletExtractConfig(
+    predictor = predictor
+  ))
+
+def load_entity_standard(tokenizer, llm):
+  class Entity(BaseModel):
+    entity: str = Field(description = "实体文本")
+    category: str = Field(description = "实体类别")
+    official_name: str = Field(description = "官方名称")
+  class EntityStandardOutput(BaseModel):
+    entities: List[Entity] = Field(description = "Entity的list")
+  class EntityStandardInput(BaseModel):
+    query: str = Field(description = "输入文本")
+    entities: str = Field(description = "实体列表")
+  class EntityStandardConfig(BaseModel):
+    class Config:
+      arbitrary_types_allowed = True
+    predictor: EntityStandard
+  class EntityStandardTool(StructuredTool):
+    name: str = "named entity standardizer"
+    description: str = "tool standardize name of entity"
+    args_schema: Type[BaseModel] = EntityStandardInput
+    config: EntityStandardConfig
+    def _run(self, query: str, entities: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> EntityStandardOutput:
+      entities = self.config.predictor.predict(query, entities)
+      if type(entities) is dict: entities = entities['entities']
+      return EntityStandardOutput(entities = [Entity(entity = entity['entity'], category = entity['category'], official_name = entity['official_name']) for entity in entities])
+  predictor = EntityStandard(tokenizer, llm)
+  return EntityStandardTool(config = EntityStandardConfig(
     predictor = predictor
   ))
