@@ -22,7 +22,10 @@ class TestTripletExtract(unittest.TestCase):
     # 2) triplet extraction
     entities = [{'entity': entity.entity, 'category': entity.category} for entity in entities.entities]
     entities = str(entities)
-    print(entities)
+    triplet_extract = load_triplet_extract(tokenizer, llm)
+    with open(os.path.join(os.path.dirname(__file__), 'ner_extract.txt'), 'r') as f:
+      triplets = triplet_extract.invoke({'query': f.read(), 'entities': entities})
+    print(triplets)
 
 if __name__ == "__main__":
   unittest.main()
