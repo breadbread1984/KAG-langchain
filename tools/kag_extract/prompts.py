@@ -250,7 +250,7 @@ extract relations from the following text:
   messages = [
     {'role': 'user', 'content': user_message}
   ]
-  prompt = tokenizer.apply_chat_template(messages, tokenize = false, add_generation_prompt = True)
+  prompt = tokenizer.apply_chat_template(messages, tokenize = False, add_generation_prompt = True)
   template = PromptTemplate(template = prompt, input_variables = ['input','entities'])
   return template, parser
 
