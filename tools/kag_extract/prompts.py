@@ -97,11 +97,7 @@ def ner_template(tokenizer, schema):
   template = PromptTemplate(template = prompt, input_variables = ['input'])
   return template, parser
 
-def triplet_tetmplate(tokenizer, entities):
-  entities = [{'entity': entity.entity, 'category': entity.category} for entity in entities]
-  entities = str(entities)
-  entities = entities.replace('{','{{')
-  entities = entities.replace('}','}}')
+def triplet_tetmplate(tokenizer):
   class Triplet(BaseModel):
     triplet: Annotated[List[str], 3] = Field(description = "三元组")
   class Output(BaseModel):
@@ -245,16 +241,16 @@ example:
 
 entity list:
 
-%s
+{entities}
 
 extract relations from the following text:
 
 {input}
-"""%(instructions, examples, entities)
+"""%(instructions, examples)
   messages = [
     {'role': 'user', 'content': user_message}
   ]
   prompt = tokenizer.apply_chat_template(messages, tokenize = false, add_generation_prompt = True)
-  template = PromptTemplate(template = prompt, input_variables = ['input'])
+  template = PromptTemplate(template = prompt, input_variables = ['input','entities'])
   return template, parser
 
