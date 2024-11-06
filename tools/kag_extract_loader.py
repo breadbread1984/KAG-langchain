@@ -34,7 +34,7 @@ def load_ner_extract(tokenizer, llm, schema):
 
 def load_triplet_extract(tokenizer, llm):
   class Triplet(BaseModel):
-    triplet: Annotated(List[str], 3) = Field(description = "三元组")
+    triplet: Annotated[List[str], 3] = Field(description = "三元组")
   class TripletOutput(BaseModel):
     triplets: List[Triplet] = Field(description = "Triplet的list")
   class TripletExtractInput(BaseModel):
