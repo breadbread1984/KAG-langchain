@@ -97,7 +97,7 @@ def ner_template(tokenizer, schema):
   template = PromptTemplate(template = prompt, input_variables = ['input'])
   return template, parser
 
-def triplet_tetmplate(tokenizer):
+def triplet_template(tokenizer):
   class Triplet(BaseModel):
     triplet: Annotated[List[str], 3] = Field(description = "三元组")
   class Output(BaseModel):
