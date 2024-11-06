@@ -10,7 +10,7 @@ def load_ner_extract(tokenizer, llm, schema):
   class Entity(BaseModel):
     entity: str = Field(description = '实体文本')
     category: str = Field(description = '实体类别')
-    properties: Optional[Dict[str, str]] = Field(None, description = '实体的属性')
+    properties: Optional[Dict[str, Union[str,List[str]]]] = Field(None, description = '实体的属性')
   class NEROutput(BaseModel):
     entities: List[Entity] = Field(description = "Entity的list")
   class NERExtractInput(BaseModel):
