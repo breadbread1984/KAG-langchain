@@ -26,6 +26,7 @@ def load_ner_extract(tokenizer, llm, schema):
     config: NERExtractConfig
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> NEROutput:
       entities = self.config.predictor.predict(query)
+      if type(entities) is dict: entities = entities['entities']
       return NEROutput(entities = [Entity(entity = entity['entity'], category = entity['category'], properties = entity['properties']) for entity in entities])
   predictor = NERExtract(tokenizer, llm, schema)
   return NERExtractTool(config = NERExtractConfig(
@@ -51,6 +52,7 @@ def load_triplet_extract(tokenizer, llm):
     config: TripletExtractConfig
     def _run(self, query: str, entities: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> TripletOutput:
       triplets = self.config.predictor.predict(query, entities)
+      if type(triplets) is dict: triplets = triplets['triplets']
       return TripletOutput(triplets = [Triplet(triplet = triplet['triplet']) for triplet in triplets])
   predictor = TripletExtract(tokenizer, llm)
   return TripletExtractTool(config = TripletExtractConfig(
