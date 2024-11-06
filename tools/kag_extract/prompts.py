@@ -20,7 +20,7 @@ def ner_template(tokenizer, schema):
     entities: List[Entity] = Field(description = "Entity的list")
   parser = JsonOutputParser(pydantic_object = Output)
   instructions = parser.get_format_instructions()
-  instructinos = instructions.replace('{','{{')
+  instructions = instructions.replace('{','{{')
   instructions = instructions.replace('}','}}')
   examples = [
         {
