@@ -20,8 +20,7 @@ class TestTripletExtract(unittest.TestCase):
     with open(os.path.join(os.path.dirname(__file__), 'ner_extract.txt'), 'r') as f:
       entities = ner_extract.invoke({'query': f.read()})
     # 2) triplet extraction
-    import pdb; pdb.set_trace()
-    entities = [{'entity': entity.entity, 'category': entity.category} for entity in entities]
+    entities = [{'entity': entity.entity, 'category': entity.category} for entity in entities.entities]
     entities = str(entities)
     print(entities)
 
