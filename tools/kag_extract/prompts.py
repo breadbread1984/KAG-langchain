@@ -13,92 +13,83 @@ def ner_template(tokenizer, schema):
   schema = schema.replace('{','{{')
   schema = schema.replace('}','}}')
   class Entity(BaseModel):
-    entity: str = Field(description = "text of entity")
-    type: str = Field(description = "entity type")
-    category: str = Field(description = "category which entity type belongs")
-    description: str = Field(description = "a brief description of the entity")
+    entity: str = Field(description = '实体文本')
+    category: str = Field(description = '实体类别')
+    properties: Optional[Dict[str, str]] = Field(None, description = '实体的属性')
   class Output(BaseModel):
-    entities: List[Entity] = Field(description = "a list of Entity")
+    entities: List[Entity] = Field(description = "Entity的list")
   parser = JsonOutputParser(pydantic_object = Output)
   instructions = parser.get_format_instructions()
   instructinos = instructions.replace('{','{{')
   instructions = instructions.replace('}','}}')
   examples = [
         {
-            "input": "The Rezort\nThe Rezort is a 2015 British zombie horror film directed by Steve Barker and written by Paul Gerstenberger.\n It stars Dougray Scott, Jessica De Gouw and Martin McCann.\n After humanity wins a devastating war against zombies, the few remaining undead are kept on a secure island, where they are hunted for sport.\n When something goes wrong with the island's security, the guests must face the possibility of a new outbreak.",
+            "input": "甲状腺结节是指在甲状腺内的肿块，可随吞咽动作随甲状腺而上下移动，是临床常见的病症，可由多种病因引起。临床上有多种甲状腺疾病，如甲状腺退行性变、炎症、自身免疫以及新生物等都可以表现为结节。甲状腺结节可以单发，也可以多发，多发结节比单发结节的发病率高，但单发结节甲状腺癌的发生率较高。患者通常可以选择在普外科，甲状腺外科，内分泌科，头颈外科挂号就诊。有些患者可以触摸到自己颈部前方的结节。在大多情况下，甲状腺结节没有任何症状，甲状腺功能也是正常的。甲状腺结节进展为其它甲状腺疾病的概率只有1%。有些人会感觉到颈部疼痛、咽喉部异物感，或者存在压迫感。当甲状腺结节发生囊内自发性出血时，疼痛感会更加强烈。治疗方面，一般情况下可以用放射性碘治疗，复方碘口服液(Lugol液)等，或者服用抗甲状腺药物来抑制甲状腺激素的分泌。目前常用的抗甲状腺药物是硫脲类化合物，包括硫氧嘧啶类的丙基硫氧嘧啶(PTU)和甲基硫氧嘧啶(MTU)及咪唑类的甲硫咪唑和卡比马唑。",
+            "schema": {
+                "Disease": {
+                    "properties": {
+                        "complication": "并发症",
+                        "commonSymptom": "常见症状",
+                        "applicableMedicine": "适用药品",
+                        "department": "就诊科室",
+                        "diseaseSite": "发病部位",
+                    }
+                },"Medicine": {
+                    "properties": {
+                    }
+                }
+            },
             "output": [
-                        {
-                            "entity": "The Rezort",
-                            "type": "Movie",
-                            "category": "Works",
-                            "description": "A 2015 British zombie horror film directed by Steve Barker and written by Paul Gerstenberger."
-                        },
-                        {
-                            "entity": "2015",
-                            "type": "Year",
-                            "category": "Date",
-                            "description": "The year the movie 'The Rezort' was released."
-                        },
-                        {
-                            "entity": "British",
-                            "type": "Nationality",
-                            "category": "GeographicLocation",
-                            "description": "Great Britain, the island that includes England, Scotland, and Wales."
-                        },
-                        {
-                            "entity": "Steve Barker",
-                            "type": "Director",
-                            "category": "Person",
-                            "description": "Steve Barker is an English film director and screenwriter."
-                        },
-                        {
-                            "entity": "Paul Gerstenberger",
-                            "type": "Writer",
-                            "category": "Person",
-                            "description": "Paul is a writer and producer, known for The Rezort (2015), Primeval (2007) and House of Anubis (2011)."
-                        },
-                        {
-                            "entity": "Dougray Scott",
-                            "type": "Actor",
-                            "category": "Person",
-                            "description": "Stephen Dougray Scott (born 26 November 1965) is a Scottish actor."
-                        },
-                        {
-                            "entity": "Jessica De Gouw",
-                            "type": "Actor",
-                            "category": "Person",
-                            "description": "Jessica Elise De Gouw (born 15 February 1988) is an Australian actress. "
-                        },
-                        {
-                            "entity": "Martin McCann",
-                            "type": "Actor",
-                            "category": "Person",
-                            "description": "Martin McCann is an actor from Northern Ireland. In 2020, he was listed as number 48 on The Irish Times list of Ireland's greatest film actors"
-                        }
-                    ]
+                {
+                    "entity": "甲状腺结节",
+                    "category":"Disease",
+                    "properties": {
+                        "complication": "甲状腺癌",
+                        "commonSymptom": ["颈部疼痛", "咽喉部异物感", "压迫感"],
+                        "applicableMedicine": ["复方碘口服液(Lugol液)", "丙基硫氧嘧啶(PTU)", "甲基硫氧嘧啶(MTU)", "甲硫咪唑", "卡比马唑"],
+                        "department": ["普外科", "甲状腺外科", "内分泌科", "头颈外科"],
+                        "diseaseSite": "甲状腺",
+                    }
+                },{
+                    "entity":"复方碘口服液(Lugol液)",
+                    "category":"Medicine"
+                },{
+                    "entity":"丙基硫氧嘧啶(PTU)",
+                    "category":"Medicine"
+                },{
+                    "entity":"甲基硫氧嘧啶(MTU)",
+                    "category":"Medicine"
+                },{
+                    "entity":"甲硫咪唑",
+                    "category":"Medicine"
+                },{
+                    "entity":"卡比马唑",
+                    "category":"Medicine"
+                }
+            ],
         }
   ]
   examples = str(examples)
   examples = examples.replace('{','{{')
   examples = examples.replace('}','}}')
-  user_message = """You're a very effective entity extraction system. Please extract all the entities that are important for knowledge build and question, along with type, category and a brief description of the entity. The description of the entity is based on your OWN KNOWLEDGE AND UNDERSTANDING and does not need to be limited to the context. the entity's category belongs taxonomically to one of the items defined by schema, please also output the category. Note: Type refers to a specific, well-defined classification, such as Professor, Actor, while category is a broader group or class that may contain more than one type, such as Person, Works. Return an empty list if the entity type does not exist. Please respond in the format of a JSON string.You can refer to the example for extraction.
+  user_message = """你是一个图谱知识抽取的专家, 基于constraint 定义的schema，从input 中抽取出所有的实体及其属性，input中未明确提及的属性返回NAN，以标准json 格式输出，结果返回list
 
-output format:
-
-%s
-
-example:
+输出格式：
 
 %s
 
-base on this schema:
+示范：
 
 %s
 
-extract all the entities from the following text:
+请基于schema:
+
+%s
+
+抽取以下文本中的实体及属性:
 
 {input}
-""" % (instructions, examples, schema)
+"""%(instructions, examples, schema)
   messages = [
     {'role': 'user', 'content': user_message},
   ]
