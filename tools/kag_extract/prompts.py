@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import re
-from typing import List, Dict, Optional, Union
+from typing import Annotated, List, Dict, Optional, Union
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
@@ -94,6 +94,167 @@ def ner_template(tokenizer, schema):
     {'role': 'user', 'content': user_message},
   ]
   prompt = tokenizer.apply_chat_template(messages, tokenize = False, add_generation_prompt = True)
+  template = PromptTemplate(template = prompt, input_variables = ['input'])
+  return template, parser
+
+def triplet_tetmplate(tokenizer, entities):
+  entities = [{'entity': entity.entity, 'category': entity.category} for entity in entities]
+  entities = str(entities)
+  entities = entities.replace('{','{{')
+  entities = entities.replace('}','}}')
+  class Triplet(BaseModel):
+    triplet: Annotated[List[str], 3] = Field(description = "三元组")
+  class Output(BaseModel):
+    triplets: List[Triplet] = Field(description = "Triplet的list")
+  parser = JsonOutputParser(pydantic_object = Output)
+  instructions = parser.get_format_instructions()
+  instructions = instructions.replace('{','{{')
+  instructions = instructions.replace('}','}}')
+  examples = {
+        "input": "The Rezort\nThe Rezort is a 2015 British zombie horror film directed by Steve Barker and written by Paul Gerstenberger.\n It stars Dougray Scott, Jessica De Gouw and Martin McCann.\n After humanity wins a devastating war against zombies, the few remaining undead are kept on a secure island, where they are hunted for sport.\n When something goes wrong with the island's security, the guests must face the possibility of a new outbreak.",
+        "entity_list": [
+            {
+                "entity": "The Rezort",
+                "category": "Works"
+            },
+            {
+                "entity": "2015",
+                "category": "Others"
+            },
+            {
+                "entity": "British",
+                "category": "GeographicLocation"
+            },
+            {
+                "entity": "Steve Barker",
+                "category": "Person"
+            },
+            {
+                "entity": "Paul Gerstenberger",
+                "category": "Person"
+            },
+            {
+                "entity": "Dougray Scott",
+                "category": "Person"
+            },
+            {
+                "entity": "Jessica De Gouw",
+                "category": "Person"
+            },
+            {
+                "entity": "Martin McCann",
+                "category": "Person"
+            },
+            {
+                "entity": "zombies",
+                "category": "Creature"
+            },
+            {
+                "entity": "zombie horror film",
+                "category": "Concept"
+            },
+            {
+                "entity": "humanity",
+                "category": "Concept"
+            },
+            {
+                "entity": "secure island",
+                "category": "GeographicLocation"
+            }
+        ],
+        "output": [
+            [
+                "The Rezort",
+                "is",
+                "zombie horror film"
+            ],
+            [
+                "The Rezort",
+                "publish at",
+                "2015"
+            ],
+            [
+                "The Rezort",
+                "released",
+                "British"
+            ],
+            [
+                "The Rezort",
+                "is directed by",
+                "Steve Barker"
+            ],
+            [
+                "The Rezort",
+                "is written by",
+                "Paul Gerstenberger"
+            ],
+            [
+                "The Rezort",
+                "stars",
+                "Dougray Scott"
+            ],
+            [
+                "The Rezort",
+                "stars",
+                "Jessica De Gouw"
+            ],
+            [
+                "The Rezort",
+                "stars",
+                "Martin McCann"
+            ],
+            [
+                "humanity",
+                "wins",
+                "a devastating war against zombies"
+            ],
+            [
+                "the few remaining undead",
+                "are kept on",
+                "a secure island"
+            ],
+            [
+                "they",
+                "are hunted for",
+                "sport"
+            ],
+            [
+                "something",
+                "goes wrong with",
+                "the island's security"
+            ],
+            [
+                "the guests",
+                "must face",
+                "the possibility of a new outbreak"
+            ]
+        ]
+  }
+  examples = str(examples)
+  examples = examples.replace('{','{{')
+  examples = examples.replace('}','}}')
+  user_message = """You are an expert specializing in carrying out open information extraction (OpenIE). Please extract any possible relations (including subject, predicate, object) from the given text, and list them following the json format {\"triples\": [[\"subject\", \"predicate\",  \"object\"]]}\n. If there are none, do not list them.\n.\n\nPay attention to the following requirements:\n- Each triple should contain at least one, but preferably two, of the named entities in the entity_list.\n- Clearly resolve pronouns to their specific names to maintain clarity.
+
+output format:
+
+%s
+
+example:
+
+%s
+
+entity list:
+
+%s
+
+extract relations from the following text:
+
+{input}
+"""%(instructions, examples, entities)
+  messages = [
+    {'role': 'user', 'content': user_message}
+  ]
+  prompt = tokenizer.apply_chat_template(messages, tokenize = false, add_generation_prompt = True)
   template = PromptTemplate(template = prompt, input_variables = ['input'])
   return template, parser
 
