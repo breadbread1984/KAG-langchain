@@ -38,6 +38,7 @@ class KAGExtractor(object):
       ent_label = entity.category
       props = entity.properties
       spg_type = self.schema[ent_label]['properties'] # Dict[str,Union[str,List[str]]]
+      # add entity node
       self.add_entity_node(id = ent_name, name = ent_name, label = ent_label)
       for prop_name, prop_value in props.items():
         # skip invalid value
@@ -46,9 +47,13 @@ class KAGExtractor(object):
         if prop_name not in spg_type: continue
         prop_value = prop_value if isinstance(prop_value, list) else [prop_value]
         for v in prop_value:
+          # add property node
           self.add_property_node(id = v, value = v, label = prop_name)
-          self.add_entity_node(id = ent_name, name = ent_name, label = ent_label, prop_name)
-          
+          # add edge between entity node and property node
+          self.add_edge(id = ent_name, name = ent_name, label = ent_label, prop_name)      
   def extract(self, text: str):
     entities = self.ner_extract.invoke({'query': text})
     self.add_entities_to_graph(entities)
+    triplets = self.triplet_extract.invoke({'query': text, 'entities': str(entities)})
+    entities = self.entity_standard.invoke({'query': text, 'entities': str(entities)})
+    
