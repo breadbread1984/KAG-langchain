@@ -291,23 +291,25 @@ def entity_standard_template(tokenizer):
   examples = str(examples)
   examples = examples.replace('{','{{')
   examples = examples.replace('}','}}')
-  user_message = """命名实体字段包含从上下文中提取的命名实体，这些可能是含义不明的缩写、别名或俚语。为了消除歧义，请尝试根据上下文和您自己的知识提供这些实体的官方名称。请注意，具有相同含义的实体只能有一个官方名称。请按照输出格式回复，无需任何解释。
+  user_message = """The named_entities contains extracted named entities from the context, which may be unclear abbreviations, aliases, or slang. To eliminate ambiguity, please attempt to provide the official names of these entities based on the context and your own knowledge. Note that entities with the same meaning can only have ONE official name.
 
-输出格式：
-
-%s
-
-示范：
+output format:
 
 %s
 
-上下文：
+example:
+
+%s
+
+context:
 
 {input}
 
-命名实体：
+named_entities:
 
 {entities}
+
+Please return the official names of the entities in the output format without any explanation.
 """%(instructions, examples)
   messages = [
     {'role': 'user', 'content': user_message},
