@@ -6,7 +6,7 @@ import unittest
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from sem_seg_extractor import SemanticSegmentExtractor
+from extractor import SemanticSegmentExtractor
 
 class TestSemanticSegExtractor(unittest.TestCase):
   def test_function(self):

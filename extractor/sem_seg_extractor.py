@@ -2,7 +2,7 @@
 
 from os.path import join, exists, splitext
 from langchain_community.document_loaders import UnstructuredPDFLoader, TextLoader, UnstructuredMarkdownLoader
-from .tools import semantic_seg_loader
+from .tools import load_semantic_seg
 from .models import Qwen2
 
 class SemanticSegmentExtractor(object):
