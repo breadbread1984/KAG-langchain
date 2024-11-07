@@ -26,7 +26,7 @@ class SemanticSegmentExtractor(object):
     beg = 0
     section_summary = None
     for idx, section in enumerate(sections.sections):
-      pos = text.find(section.section_starting_point, beg = beg)
+      pos = text.find(section.section_starting_point, beg)
       if pos < 0: raise Exception('unmatched section start string!')
       if idx != 0: segments.append({'summary': section_summary, 'text': text[beg:pos]})
       beg = pos
