@@ -19,12 +19,10 @@ class KAGExtractor(object):
     self.driver = GraphDatabase.driver(neo4j_info['host'], auth = (neo4j_info['user'], neo4j_info['password']))
     self.db = neo4j_info['db']
     with open(schema_path, 'r') as f:
-      self.schema = json.loads(f.read())
-    pattern = r"([^(]*)\((.*)\)"
-    self.schema = {re.search(pattern, k, re.DOTALL)[1]:v for k, v in self.schema.items()}
+      schema = json.loads(f.read())
     if tokenizer is None or llm is None:
       tokenizer, llm = Qwen2(locally = True)
-    self.ner_extract = load_ner_extract(tokenizer, llm, self.schema)
+    self.ner_extract = load_ner_extract(tokenizer, llm, schema)
     self.triplet_extract = load_triplet_extract(tokenizer, llm)
     self.entity_standard = load_entity_standard(tokenizer, llm)
   def add_entity_node(self, id, name, label, properties):
@@ -39,7 +37,6 @@ class KAGExtractor(object):
       ent_label = entity.category
       props = entity.properties
       off_name = entity.official_name
-      spg_type = self.schema[ent_label]['properties'] # Dict[str,Union[str,List[str]]]
       # add entity node
       self.add_entity_node(id = ent_name, name = ent_name, label = ent_label, properties = props)
       self.add_entity_node(id = off_name, name = off_name, label = ent_label, properties = props)
