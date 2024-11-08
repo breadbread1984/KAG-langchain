@@ -53,7 +53,6 @@ class KAGExtractor(object):
       records, _, keys = self.driver.execute_query('match (a: Entity {id: "$name", label: "$category"}), (b: Chunk {id: "$hex"}) merge (a)-[r:BELONGS_TO]->(b);', name = ent_name, category = ent_label, hex = hash_hex, database_ = self.db)
   def add_edges_to_graph(self, triplets, entities):
     for triplet in triplets.triplets:
-      import pdb; pdb.set_trace()
       ent1_name, predicate, ent2_name = triplet.triplet[0], triplet.triplet[1], triplet.triplet[2]
       matched1 = list(filter(lambda x: x['entity'] == ent1_name, entities))
       if len(matched1) != 1:
