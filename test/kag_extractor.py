@@ -9,7 +9,7 @@ FLAGS = flags.FLAGS
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from extractor import SemanticSegmentExtractor, KAGExtractor
+from extractor import SemanticSegmentExtractor, KAGExtractor, Qwen2
 
 def add_options():
   flags.DEFINE_string("schema", default = os.path.join(os.path.dirname(__file__), "schema.json"), help = 'path to schema json file')
@@ -20,10 +20,13 @@ def add_options():
 
 class TestKAGExtractor(unittest.TestCase):
   def test_function(self):
-      extractor = SemanticSegmentExtractor()
+      tokenizer, llm = Qwen2(locally = True)
+      extractor = SemanticSegmentExtractor(tokenizer, llm)
       file_path = os.path.join(os.path.dirname(__file__), 'kag_extractor.txt')
       segments = extractor.extract(file_path)
       extractor = KAGExtractor(FLAGS.schema,
+                               tokenizer = tokenizer,
+                               llm = llm,
                                neo4j_info = {
                                  'host': FLAGS.neo4j_host,
                                  'user': FLAGS.neo4j_user,
