@@ -229,7 +229,7 @@ def triplet_template(tokenizer):
   examples = str(examples)
   examples = examples.replace('{','{{')
   examples = examples.replace('}','}}')
-  user_message = """You are an expert specializing in carrying out open information extraction (OpenIE). Please extract any possible relations (including subject, predicate, object) from the given text, and list them following the json format {{\"triples\": [[\"subject\", \"predicate\",  \"object\"]]}}\n. If there are none, do not list them.\n.\n\nPay attention to the following requirements:\n- Each triple should contain at least one, but preferably two, of the named entities in the entity_list.\n- Clearly resolve pronouns to their specific names to maintain clarity.
+  user_message = """You are an expert specializing in carrying out open information extraction (OpenIE). Please extract any possible relations (including subject, predicate, object) from the given text, and list them following the json format {{\"triplets\": [[\"subject\", \"predicate\",  \"object\"]]}}\n. If there are none, do not list them.\n.\n\nPay attention to the following requirements:\n- Each triple should contain at least one, but preferably two, of the named entities in the entity_list.\n- Clearly resolve pronouns to their specific names to maintain clarity.
 
 output format:
 
