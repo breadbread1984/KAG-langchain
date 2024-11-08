@@ -41,8 +41,8 @@ class KAGExtractor(object):
       off_name = entity.official_name
       spg_type = self.schema[ent_label]['properties'] # Dict[str,Union[str,List[str]]]
       # add entity node
-      self.add_entity_node(id = ent_name, name = ent_name, label = ent_label, props)
-      self.add_entity_node(id = off_name, name = off_name, label = ent_label, props)
+      self.add_entity_node(id = ent_name, name = ent_name, label = ent_label, properties = props)
+      self.add_entity_node(id = off_name, name = off_name, label = ent_label, properties = props)
       self.add_official_name_edge(id1 = ent_name, id2 = off_name, label = ent_label)
   def add_chunk_to_graph(self, text, summary, entities):
     text_bytes = text.encode('utf-8')
