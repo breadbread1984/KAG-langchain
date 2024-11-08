@@ -30,7 +30,7 @@ class SemanticSegmentExtractor(object):
       pos = text.find(section.section_starting_point, beg)
       if pos < 0:
         matches = process.extract(text, section.section_starting_point, limit = 3)
-        matches = list(filter(lambda x: x[0] == section.section_starting_point[0], matches))
+        matches = list(filter(lambda x: x[0] == section.section_starting_point[0] and x[1] >= beg, matches))
         if len(matches) == 0:
           raise Exception('unmatched section start string!')
         pos = matches[0][1]
