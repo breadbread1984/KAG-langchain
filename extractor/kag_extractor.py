@@ -53,15 +53,18 @@ class KAGExtractor(object):
       records, _, keys = self.driver.execute_query('match (a: Entity {id: $name, label: $category}), (b: Chunk {id: $hex}) merge (a)-[r:BELONGS_TO]->(b);', name = ent_name, category = ent_label, hex = hash_hex, database_ = self.db)
   def add_edges_to_graph(self, triplets, entities):
     for triplet in triplets.triplets:
+      if len(triplet.triplet) != 3:
+        print('invalid elements in triplet, skip!')
+        continue
       ent1_name, predicate, ent2_name = triplet.triplet[0], triplet.triplet[1], triplet.triplet[2]
       matched1 = list(filter(lambda x: x['entity'] == ent1_name, entities))
-      if len(matched1) != 1:
-        print(f'entity {ent1_name} got multiple matches in entity list! skip triplet {triplet}!')
+      if len(matched1) == 0:
+        print(f'entity {ent1_name} has no matches in entity list! skip triplet {triplet}!')
         continue
       ent1_label = matched1[0]['category']
       matched2 = list(filter(lambda x: x['entity'] == ent2_name, entities))
-      if len(matched2) != 1:
-        print(f'entity {ent2_name} got multiple matches in entity list! skip triplet {triplet}!')
+      if len(matched2) == 0:
+        print(f'entity {ent2_name} has no matches in entity list! skip triplet {triplet}!')
         continue
       ent2_label = matched2[0]['category']
       self.add_entity_edge(id1 = ent1_name, label1 = ent1_label, id2 = ent2_name, label2 = ent2_label, predicate = predicate)
