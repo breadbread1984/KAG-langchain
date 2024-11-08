@@ -56,12 +56,12 @@ class KAGExtractor(object):
       ent1_name, predicate, ent2_name = triplet.triplet[0], triplet.triplet[1], triplet.triplet[2]
       matched1 = list(filter(lambda x: x['entity'] == ent1_name, entities))
       if len(matched1) != 1:
-        print(f'entity {ent_name1} got multiple matches in entity list! skip triplet {triplet}!')
+        print(f'entity {ent1_name} got multiple matches in entity list! skip triplet {triplet}!')
         continue
       ent1_label = matched1[0]['category']
       matched2 = list(filter(lambda x: x['entity'] == ent2_name, entities))
       if len(matched2) != 1:
-        print(f'entity {ent_name2} got multiple matches in entity list! skip triplet {triplet}!')
+        print(f'entity {ent2_name} got multiple matches in entity list! skip triplet {triplet}!')
         continue
       ent2_label = matched2[0]['category']
       self.add_entity_edge(id1 = ent1_name, label1 = ent1_label, id2 = ent2_name, label2 = ent2_label, predicate = predicate)
