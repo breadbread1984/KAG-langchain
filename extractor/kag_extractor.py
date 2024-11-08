@@ -67,7 +67,6 @@ class KAGExtractor(object):
       self.add_entity_edge(id1 = ent1_name, label1 = ent1_label, id2 = ent2_name, label2 = ent2_label, predicate = predicate)
   def extract(self, text: str, summary: str):
     entities = self.ner_extract.invoke({'query': text})
-    import pdb; pdb.set_trace()
     ents_str = str([{'entity': entity.entity, 'category': entity.category} for entity in entities.entities])
     ents_with_offname = self.entity_standard.invoke({'query': text, 'entities': ents_str})
     final_entities = list()
