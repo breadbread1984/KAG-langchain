@@ -25,7 +25,7 @@ def Qwen2(locally = False):
       logits_processor.append(TopPLogitsWarper(0.8))
       inputs = self.tokenizer(prompt, return_tensors = 'pt')
       inputs = inputs.to(device('cuda'))
-      outputs = self.model.generate(**inputs, logits_processor = logits_processor, use_cache = True, do_sample = True, max_length = 131072)
+      outputs = self.model.generate(**inputs, logits_processor = logits_processor, use_cache = True, do_sample = False, max_length = 131072)
       outputs = outputs.tolist()[0][len(inputs["input_ids"][0]):-1]
       response = self.tokenizer.decode(outputs)
       return response
