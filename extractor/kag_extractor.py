@@ -68,20 +68,28 @@ class KAGExtractor(object):
   def extract(self, text: str, summary: str):
     entities = self.ner_extract.invoke({'query': text})
     ents_str = str([{'entity': entity.entity, 'category': entity.category} for entity in entities.entities])
-    ents_with_offname = self.entity_standard.invoke({'query': text, 'entities': ents_str})
-    final_entities = list()
-    for ent in ents_with_offname.entities:
-      matches = list(filter(lambda x: x.entity == ent.entity and x.category == ent.category, entities.entities))
-      if len(matches) != 1:
-        print(f"entity {ent.entity} cannot match single match in entityes! skip this entity!")
-        continue
-      final_entity = {
-        'entity': ent.entity,
-        'category': ent.category,
-        'properties': matches[0].properties,
-        'official_name': ent.official_name
-      }
-      final_entities.append(final_entity)
+    try:
+      ents_with_offname = self.entity_standard.invoke({'query': text, 'entities': ents_str})
+      final_entities = list()
+      for ent in ents_with_offname.entities:
+        matches = list(filter(lambda x: x.entity == ent.entity and x.category == ent.category, entities.entities))
+        if len(matches) != 1:
+          print(f"entity {ent.entity} cannot match single match in entityes! skip this entity!")
+          continue
+        final_entity = {
+          'entity': ent.entity,
+          'category': ent.category,
+          'properties': matches[0].properties,
+          'official_name': ent.official_name
+        }
+        final_entities.append(final_entity)
+    except:
+      final_entities = [{
+        'entity': entity.entity,
+        'category': entity.category,
+        'properties': entity.properties,
+        'official_name': entity.entity
+      } for entity in entities.entities]
     self.add_entities_to_graph(final_entities)
     triplets = self.triplet_extract.invoke({'query': text, 'entities': ents_str})
     self.add_edges_to_graph(triplets, final_entities)
