@@ -26,11 +26,11 @@ class KAGExtractor(object):
     self.triplet_extract = load_triplet_extract(tokenizer, llm)
     self.entity_standard = load_entity_standard(tokenizer, llm)
   def add_entity_node(self, id, name, label, properties):
-    records, summary, keys = self.driver.execute_query('merge (a: Entity {id: "$id", name: "$name", label: "$label", properties: "$properties"}) return a;', id = id, name = name, label = label, properties = properties, database_ = self.db)
+    records, summary, keys = self.driver.execute_query('merge (a: Entity {id: $id, name: $name, label: $label, properties: $properties}) return a;', id = id, name = name, label = label, properties = properties, database_ = self.db)
   def add_official_name_edge(self, id1, id2, label):
-    records, summary, keys = self.driver.execute_query('match (a {id: "$id1", label: "$label"}), (b {id: "$id2", label: "$label"}) merge (a)-[r:HAS_OFFICIAL_NAME]->(b);', id1 = id1, id2 = id2, label = label, database_ = self.db)
+    records, summary, keys = self.driver.execute_query('match (a {id: $id1, label: $label}), (b {id: $id2, label: $label}) merge (a)-[r:HAS_OFFICIAL_NAME]->(b);', id1 = id1, id2 = id2, label = label, database_ = self.db)
   def add_entity_edge(self, id1, label1, id2, label2, predicate):
-    records, summary, keys = self.driver.execute_query('match (a {id: "$id1", label: "$label1"}), (b {id: "$id2", label: "$label2"}) merge (a)-[r:HAS_RELATION]->(b) set r.type = $type;', id1 = id1, label1 = label1, id2 = id2, label2 = label2, type = predicate, database_ = self.db)
+    records, summary, keys = self.driver.execute_query('match (a {id: $id1, label: $label1}), (b {id: $id2, label: $label2}) merge (a)-[r:HAS_RELATION]->(b) set r.type = $type;', id1 = id1, label1 = label1, id2 = id2, label2 = label2, type = predicate, database_ = self.db)
   def add_entities_to_graph(self, entities):
     for entity in entities:
       ent_name = entity['entity']
@@ -46,11 +46,11 @@ class KAGExtractor(object):
     has_object = hashlib.sha256()
     has_object.update(text_bytes)
     hash_hex = has_object.hexdigest()
-    records, _, keys = self.driver.execute_query('merge (a: Chunk {id: "$id", summary: "$summary", content: "$content"}) return a;', id = hash_hex, summary = summary, content = text, database_ = self.db)
+    records, _, keys = self.driver.execute_query('merge (a: Chunk {id: $id, summary: $summary, content: $content}) return a;', id = hash_hex, summary = summary, content = text, database_ = self.db)
     with entity in entities:
       ent_name = entity['entity']
       ent_label = entity['category']
-      records, _, keys = self.driver.execute_query('match (a: Entity {id: "$name", label: "$category"}), (b: Chunk {id: "$hex"}) merge (a)-[r:BELONGS_TO]->(b);', name = ent_name, category = ent_label, hex = hash_hex, database_ = self.db)
+      records, _, keys = self.driver.execute_query('match (a: Entity {id: $name, label: $category}), (b: Chunk {id: $hex}) merge (a)-[r:BELONGS_TO]->(b);', name = ent_name, category = ent_label, hex = hash_hex, database_ = self.db)
   def add_edges_to_graph(self, triplets, entities):
     for triplet in triplets.triplets:
       ent1_name, predicate, ent2_name = triplet.triplet[0], triplet.triplet[1], triplet.triplet[2]
