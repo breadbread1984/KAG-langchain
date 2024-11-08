@@ -17,7 +17,7 @@ class KAGExtractor(object):
                  'db': 'neo4j'
                }):
     self.driver = GraphDatabase.driver(neo4j_info['host'], auth = (neo4j_info['user'], neo4j_info['password']))
-    self.db = db
+    self.db = neo4j_info['db']
     with open(schema_path, 'r') as f:
       self.schema = json.loads(f.read())
     pattern = r"([^(]*)\((.*)\)"
