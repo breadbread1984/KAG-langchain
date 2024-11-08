@@ -34,8 +34,9 @@ class TestKAGExtractor(unittest.TestCase):
         summary, text = segment['summary'], segment['text']
         extractor.extract(text, summary)
 
-def main(unused_argv):
-  unittest.main()
+def main(argv):
+  argv = argv[:1] + argv[2:]
+  unittest.main(argv = argv)
 
 if __name__ == "__main__":
   add_options()
