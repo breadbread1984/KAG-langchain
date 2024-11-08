@@ -27,7 +27,7 @@ def load_ner_extract(tokenizer, llm, schema):
     def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> NEROutput:
       entities = self.config.predictor.predict(query)
       if type(entities) is dict: entities = entities['entities']
-      return NEROutput(entities = [Entity(entity = entity['entity'], category = entity['category'], properties = entity['properties']) for entity in entities])
+      return NEROutput(entities = [Entity(entity = entity.get('entity',''), category = entity.get('category',''), properties = entity.get('properties',{})) for entity in entities])
   predictor = NERExtract(tokenizer, llm, schema)
   return NERExtractTool(config = NERExtractConfig(
     predictor = predictor
