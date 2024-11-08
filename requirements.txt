@@ -1,2 +1,2 @@
-fuzzywuzzy
+regex
 absl-py
