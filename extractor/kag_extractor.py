@@ -2,6 +2,7 @@
 
 import re
 import json
+import hashlib
 from os.path import join, exists, splitext
 from neo4j import GraphDatabase
 from .tools import load_ner_extract, load_triplet_extract, load_entity_standard
@@ -29,9 +30,9 @@ class KAGExtractor(object):
   def add_entity_node(self, id, name, label, properties):
     records, summary, keys = self.driver.execute_query('merge (a: Entity {id: "$id", name: "$name", label: "$label", properties: "$properties"}) return a;', id = id, name = name, label = label, properties = properties, database_ = self.db)
   def add_official_name_edge(self, id1, id2, label):
-    records, summary, keys = self.driver.execute_query('match (a {id: "$id1", label: "$label"}), (b {id: "$id2", label: "$label"}) merge (a)-[:OFFICIAL_NAME]->(b);', id1 = id1, id2 = id2, label = label, database_ = self.db)
+    records, summary, keys = self.driver.execute_query('match (a {id: "$id1", label: "$label"}), (b {id: "$id2", label: "$label"}) merge (a)-[r:HAS_OFFICIAL_NAME]->(b);', id1 = id1, id2 = id2, label = label, database_ = self.db)
   def add_entity_edge(self, id1, label1, id2, label2, predicate):
-    records, summary, keys = self.driver.execute_query('match (a {id: "$id1", label: "$label1"}), (b {id: "$id2", label: "$label2"}) merge (a)-[r:RELATION]->(b) set r.type = $type;', id1 = id1, label1 = label1, id2 = id2, label2 = label2, type = predicate, database_ = self.db)
+    records, summary, keys = self.driver.execute_query('match (a {id: "$id1", label: "$label1"}), (b {id: "$id2", label: "$label2"}) merge (a)-[r:HAS_RELATION]->(b) set r.type = $type;', id1 = id1, label1 = label1, id2 = id2, label2 = label2, type = predicate, database_ = self.db)
   def add_entities_to_graph(self, entities):
     for entity in entities.entities:
       ent_name = entity.entity
@@ -43,8 +44,17 @@ class KAGExtractor(object):
       self.add_entity_node(id = ent_name, name = ent_name, label = ent_label, props)
       self.add_entity_node(id = off_name, name = off_name, label = ent_label, props)
       self.add_official_name_edge(id1 = ent_name, id2 = off_name, label = ent_label)
-  def add_chunk_to_graph(self, text):
-    pass
+  def add_chunk_to_graph(self, text, summary, entities):
+    text_bytes = text.encode('utf-8')
+    has_object = hashlib.sha256()
+    has_object.update(text_bytes)
+    hash_hex = has_object.hexdigest()
+    records, _, keys = self.driver.execute_query('merge (a: Chunk {id: "$id", summary: "$summary", content: "$content"}) return a;', id = hash_hex, summary = summary, content = text, database_ = self.db)
+    with entity in entities:
+      ent_name = entity.entity
+      ent_label = entity.category
+      off_name = entity.official_name
+      records, _, keys = self.driver.execute_query('match (a: Entity {id: "$name", label: "$category"}), (b: Chunk {id: "$hex"}) merge (a)-[r:BELONGS_TO]->(b);', name = ent_name, category = ent_label, hex = hash_hex, database_ = self.db)
   def add_edges_to_graph(self, triplets, entities):
     for triplet in triplets:
       ent1_name, predicate, ent2_name = triplet[0], triplet[1], triplet[2]
@@ -59,10 +69,10 @@ class KAGExtractor(object):
         continue
       ent2_label = matched2[0].category
       self.add_entity_edge(id1 = ent1_name, label1 = ent1_label, id2 = ent2_name, label2 = ent2_label, predicate = predicate)
-  def extract(self, text: str):
+  def extract(self, text: str, summary: str):
     entities = self.ner_extract.invoke({'query': text})
     entities = self.entity_standard.invoke({'query': text, 'entities': str(entities)})
     self.add_entities_to_graph(entities)
     triplets = self.triplet_extract.invoke({'query': text, 'entities': str(entities)})
     self.add_edges_to_graph(triplets, entities)
-    self.add_chunk_to_graph(text)
+    self.add_chunk_to_graph(text, summary, entities)
