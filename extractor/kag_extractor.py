@@ -47,7 +47,7 @@ class KAGExtractor(object):
     has_object.update(text_bytes)
     hash_hex = has_object.hexdigest()
     records, _, keys = self.driver.execute_query('merge (a: Chunk {id: $id, summary: $summary, content: $content}) return a;', id = hash_hex, summary = summary, content = text, database_ = self.db)
-    with entity in entities:
+    for entity in entities:
       ent_name = entity['entity']
       ent_label = entity['category']
       records, _, keys = self.driver.execute_query('match (a: Entity {id: $name, label: $category}), (b: Chunk {id: $hex}) merge (a)-[r:BELONGS_TO]->(b);', name = ent_name, category = ent_label, hex = hash_hex, database_ = self.db)
