@@ -1,0 +1,83 @@
+{
+  "HealthFood(保健食品)": {
+    "properties": {
+    }
+  },
+  "DiseaseCategory(疾病类目)": {
+    "properties": {
+    }
+  },
+  "ExaminationTest(检查检验)": {
+    "properties": {
+    }
+  },
+  "Population(人群)": {
+    "properties": {
+    }
+  },
+  "SurgicalOperation(手术操作)": {
+    "properties": {
+    }
+  },
+  "SpecialMedicalFood(特医食品)": {
+    "properties": {
+    }
+  },
+  "Medicine(药品)": {
+    "properties": {
+    }
+  },
+  "MedicalInsuranceReimbursementPolicy(医保报销政策)": {
+    "properties": {
+    }
+  },
+  "MedicalEquipment(医疗器械)": {
+    "properties": {
+    }
+  },
+  "Doctor(医生)": {
+    "properties": {
+    }
+  },
+  "Hospital(医院)": {
+    "properties": {
+    }
+  },
+  "Vaccine(疫苗)": {
+    "properties": {
+    }
+  },
+  "MedicalAdvice(诊疗建议)": {
+    "properties": {
+    }
+  },
+  "Symptom(症状)": {
+    "properties": {
+    }
+  },
+  "ComprehensiveService(综合服务)": {
+    "properties": {
+    }
+  },
+  "MedicalTerminology(医学术语)": {
+    "properties": {
+    }
+  },
+  "Indicator(医学指征)": {
+    "properties": {
+    }
+  },
+  "Disease(疾病)": {
+    "properties": {
+      "complication": "并发症",
+      "commonSymptom": "常见症状",
+      "applicableMedicine": "适用药品",
+      "hospitalDepartment": "就诊科室",
+      "diseaseSite": "发病部位"
+    }
+  },
+  "Others(其他)": {
+    "properties": {
+    }
+  }
+}
