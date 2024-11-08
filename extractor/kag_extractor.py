@@ -26,7 +26,7 @@ class KAGExtractor(object):
     self.triplet_extract = load_triplet_extract(tokenizer, llm)
     self.entity_standard = load_entity_standard(tokenizer, llm)
   def add_entity_node(self, id, name, label, properties):
-    records, summary, keys = self.driver.execute_query('merge (a: Entity {id: $id, name: $name, label: $label, properties: $properties}) return a;', id = id, name = name, label = label, properties = properties, database_ = self.db)
+    records, summary, keys = self.driver.execute_query('merge (a: Entity {id: $id, name: $name, label: $label, properties: $properties}) return a;', id = id, name = name, label = label, properties = str(properties), database_ = self.db)
   def add_official_name_edge(self, id1, id2, label):
     records, summary, keys = self.driver.execute_query('match (a {id: $id1, label: $label}), (b {id: $id2, label: $label}) merge (a)-[r:HAS_OFFICIAL_NAME]->(b);', id1 = id1, id2 = id2, label = label, database_ = self.db)
   def add_entity_edge(self, id1, label1, id2, label2, predicate):
