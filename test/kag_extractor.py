@@ -9,7 +9,7 @@ FLAGS = flags.FLAGS
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from extractor import SemanticSegmentExtractor, KAGExtractor, Qwen2
+from extractor import SemanticSegmentExtractor, KAGExtractor, Qwen2, Llama3
 
 def add_options():
   flags.DEFINE_string("schema", default = os.path.join(os.path.dirname(__file__), "schema.json"), help = 'path to schema json file')
