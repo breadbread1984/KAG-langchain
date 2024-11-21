@@ -16,11 +16,6 @@
       "device": "合成采用的设备",
       "participants": "合成采用的前体物质之外的各种化合物",
       "target": "合成目标物质",
-      "condition": "合成条件"
-    }
-  },
-  "合成条件(synthesis_condition)": {
-    "properties": {
       "temperature": "合成温度",
       "time": "合成需要时间"
     }
