@@ -1,0 +1,28 @@
+{
+  "电池(battery)": {
+    "properties": {
+    }
+  },
+  "电解质(electrolyte)": {
+    "properties": {
+      "precursors": "合成电解质采用的前体物质",
+      "conductivity": "电解质的电导率"
+    }
+  },
+  "合成操作(synthesis_operation)": {
+    "properties": {
+      "operation": "操作类型",
+      "precursors": "合成步骤采用的前体物质",
+      "device": "合成采用的设备",
+      "participants": "合成采用的前体物质之外的各种化合物",
+      "target": "合成目标物质",
+      "condition": "合成条件"
+    }
+  },
+  "合成条件(synthesis_condition)": {
+    "properties": {
+      "temperature": "合成温度",
+      "time": "合成需要时间"
+    }
+  }
+}
